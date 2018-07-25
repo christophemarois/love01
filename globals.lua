@@ -19,5 +19,17 @@ sti = require('lib/sti')
 local inspect = require('lib/inspect')
 log = function (obj) print(inspect(obj)) end
 
+if IS_DEV then
+  lurker = require('lib/lurker')
+  lovebird = require('lib/lovebird')
+  debugGraph = require('lib/debugGraph') 
+
+  debugGraphs = {}
+end
+
 GameObject = require('objects/GameObject')
 Player = require('objects/Player')
+
+function rgba (r, g, b, a)
+  return unpack({ r / 255, g / 255, b / 255, a })
+end

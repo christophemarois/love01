@@ -14,12 +14,12 @@ return {
     {
       name = "Moutain",
       firstgid = 1,
-      filename = "./map.tsx",
+      filename = "Mountain.tsx",
       tilewidth = 16,
       tileheight = 16,
       spacing = 0,
       margin = 0,
-      image = "./Mountain.png",
+      image = "Mountain.png",
       imagewidth = 272,
       imageheight = 128,
       tileoffset = {
@@ -39,8 +39,18 @@ return {
   },
   layers = {
     {
+      type = "imagelayer",
+      name = "BG",
+      visible = true,
+      opacity = 1,
+      offsetx = -39,
+      offsety = 0,
+      image = "clouds.png",
+      properties = {}
+    },
+    {
       type = "tilelayer",
-      name = "Tile Layer 2",
+      name = "a",
       x = 0,
       y = 0,
       width = 10,
@@ -64,7 +74,7 @@ return {
     },
     {
       type = "tilelayer",
-      name = "Tile Layer 2",
+      name = "b",
       x = 0,
       y = 0,
       width = 10,
