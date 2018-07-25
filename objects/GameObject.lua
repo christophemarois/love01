@@ -12,17 +12,13 @@ end
 
 function GameObject.static:updateAll (dt)
   for i, obj in ipairs(GameObject.static.objects) do
-    if type(obj.update) == 'function' then
-      obj:update(dt)
-    end
+    obj:update(dt)
   end
 end
 
 function GameObject.static:drawAll ()
   for i, obj in ipairs(GameObject.static.objects) do
-    if type(obj.draw) == 'function' then
-      obj:draw()
-    end
+    obj:draw()
   end
 end
 

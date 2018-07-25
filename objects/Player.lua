@@ -22,12 +22,12 @@ function Player:initialize(options)
   self.speed = options.speed or error('Player.speed cannot be nil')
   self.acceleration = options.acceleration or error('Player acceleration cannot be nil')
   self.maxSpeed = options.maxSpeed or options.speed
+  self.duration = options.duration or 1
   
   self.quads = Player:makeQuads(self.image, self.w, self.h)
   
   self.currentTime = 0
   self.direction = 1
-  self.duration = duration or 1
   self.isMoving = false
   self.velocity = self.speed
   
@@ -38,9 +38,8 @@ function Player:initialize(options)
     end
   end
 
-  if IS_DEV then
-    debugGraphs.heroSpeed = debugGraph:new('custom', 10, 90, 80, 30, 0.5, 'Hero speed', love.graphics.newFont(14))
-  end
+  Graph.static.graphs.heroSpeed = Graph:new('H Sp: %spx')
+  Graph.static.graphs.heroVelocity = Graph:new('H Vel: %s')
 end
 
 function Player:update(dt)
@@ -60,10 +59,7 @@ function Player:update(dt)
     local movement = math.min(self.maxSpeed, self.velocity * dt)
     self.x = math.min(self.x + movement, CANVAS_WIDTH - self.w)
     
-    if IS_DEV then
-      debugGraphs.heroSpeed:update(dt, movement)
-      debugGraphs.heroSpeed.label = 'H Speed: '..math.floor(movement)
-    end
+    Graph.static.graphs.heroSpeed.value = movement
   elseif love.keyboard.isDown('left') then
     self.velocity = self.velocity + self.acceleration
     self.isMoving = true
@@ -72,11 +68,10 @@ function Player:update(dt)
     local movement = math.min(self.maxSpeed, self.velocity * dt)
     self.x = math.max(self.x - movement, 0)
     
-    if IS_DEV then
-      debugGraphs.heroSpeed:update(dt, movement)
-      debugGraphs.heroSpeed.label = 'H Speed: '..math.floor(movement)
-    end
+    Graph.static.graphs.heroSpeed.value = movement
   end
+
+  Graph.static.graphs.heroVelocity.value = self.velocity
 end
 
 function Player:draw()

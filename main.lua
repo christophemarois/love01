@@ -5,7 +5,6 @@ local canvas = love.graphics.newCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
 function love.load()
   love.window.setMode(CANVAS_WIDTH * CANVAS_SCALE, CANVAS_HEIGHT * CANVAS_SCALE)
-  love.graphics.setBackgroundColor(rgba(22, 1, 96, 1.00))
 
   love.physics.setMeter(16)
   map = sti('maps/map.lua', { 'box2d' })
@@ -28,22 +27,18 @@ function love.load()
     maxSpeed = 3
   })
 
-  if IS_DEV then
-    debugGraphs.fps = debugGraph:new('fps', 10, 10, 80, 30, 0.5, nil, love.graphics.newFont(14))
-    debugGraphs.mem = debugGraph:new('mem', 10, 50, 80, 30, 0.5, nil, love.graphics.newFont(14))
-
-    -- debugGraphs.fps = debugGraph:new('fps', 0, 0)
-    print("Binding dev console on http://localhost:8000")
-  end
+  Graph.static.graphs.fps = Graph:new('FPS: %s')
+  Graph.static.graphs.ram = Graph:new('RAM: %s MB')
 end
 
 function love.update(dt)
+  Graph.static.graphs.fps.value = (0.75 * 1 / dt) + (0.25 * love.timer.getFPS())
+  Graph.static.graphs.ram.value = collectgarbage('count') / 1024
+
   if IS_DEV then
     lurker.update()
     lovebird.update()
-
-    debugGraphs.fps:update(dt)
-    debugGraphs.mem:update(dt)
+    Graph:updateAll(dt)
   end
 
   map:update(dt)
@@ -54,21 +49,28 @@ function love.draw()
   love.graphics.setCanvas(canvas)
   love.graphics.clear()
 
-  love.graphics.setColor(255, 255, 255)
-	map:draw()
-
-  -- Draw Collision Map (doesn't work with GameObject debug yet)
-  if DEBUG_COLLISIONS then
-    love.graphics.setColor(255, 0, 0)
-    map:box2d_draw()
-  end
+  love.graphics.setColor(rgba(255, 255, 255, 1))
+  map:draw()
   
   GameObject:drawAll()
+
+  -- Draw Collision Map (doesn't work with GameObject debug yet)
+  -- if DEBUG_COLLISIONS then
+  --   love.graphics.setColor(rgba(0, 255, 0, 1))
+  --   map:box2d_draw()
+  -- end
 
   love.graphics.setCanvas()
   love.graphics.draw(canvas, 0, 0, 0, CANVAS_SCALE, CANVAS_SCALE)
 
   if IS_DEV then
-    for _, graph in pairs(debugGraphs) do graph:draw() end
+    Graph:drawAll()
+  end
+end
+
+function love.keypressed(key, scancode)
+  if IS_DEV and scancode == 'd' then
+    Graph:toggle()
+    DEBUG_COLLISIONS = not DEBUG_COLLISIONS
   end
 end

@@ -19,12 +19,13 @@ sti = require('lib/sti')
 local inspect = require('lib/inspect')
 log = function (obj) print(inspect(obj)) end
 
+-- Debug graphs
+Graph = require('graphs')
+
 if IS_DEV then
   lurker = require('lib/lurker')
   lovebird = require('lib/lovebird')
-  debugGraph = require('lib/debugGraph') 
-
-  debugGraphs = {}
+  print("Binding dev console on http://localhost:8000")
 end
 
 GameObject = require('objects/GameObject')
