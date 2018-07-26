@@ -1,113 +1,67 @@
 local Player = class('Player', GameObject)
 
-function Player.static:makeQuads (image, w, h)
-  local quads = {}
+local image = love.graphics.newImage('characters.png')
+local sprite = anim8.newGrid(32, 32, image:getWidth(), image:getHeight())
 
-  for y = 0, image:getHeight() - h, h do
-    for x = 0, image:getWidth() - w, w do
-      local quad = love.graphics.newQuad(x, y, w, h, image:getDimensions())
-      _.push(quads, quad)
-    end
-  end
+local walkingSpeed = 60
 
-  return quads
-end
+local spriteW = 14
+local spriteH = 23
+local spriteXOffset = 9
+local colliderYOffset = (GRID_SIZE * 2) - spriteH
 
 function Player:initialize(options)
   GameObject.initialize(self, 'player', options)
 
-  self.image = options.image or error('Player.image cannot be nil')
-  self.w = options.w or error('Player.w cannot be nil')
-  self.h = options.h or error('Player.h cannot be nil')
-  self.speed = options.speed or error('Player.speed cannot be nil')
-  self.acceleration = options.acceleration or error('Player acceleration cannot be nil')
-  self.maxSpeed = options.maxSpeed or options.speed
-  self.duration = options.duration or 1
+  assert(type(options.gridX) == 'number', 'Player.gridX must be a number')
+  assert(type(options.gridY) == 'number', 'Player.gridY must be a number')
   
-  self.quads = Player:makeQuads(self.image, self.w, self.h)
-  
-  self.currentTime = 0
-  self.direction = 1
-  self.isMoving = false
-  self.velocity = self.speed
+  self.w = spriteW
+  self.h = spriteH
+  self.x = (GRID_SIZE * options.gridX) + ((GRID_SIZE - self.w) / 2)
+  self.y = (GRID_SIZE * options.gridY)
+  self.vx = 0
+  self.vy = 0
+
+  self.state = 'walking'
+
+  self.animation = anim8.newAnimation(sprite('1-3', 3), 0.1)
+
+  self.collider = { uuid = self.uuid }
+  world:add(self.collider, self.x, self.y + colliderYOffset, self.w, self.h)
+  table.insert(map.bump_collidables, self.collider)
   
   function love.keyreleased(key)
     if key == "right" or key == "left" then
-      self.velocity = self.speed
-      self.isMoving = false
+      self.vx = 0
     end
   end
 
-  Graph.static.graphs.heroSpeed = Graph:new('H Sp: %spx')
-  Graph.static.graphs.heroVelocity = Graph:new('H Vel: %s')
-  Graph.static.graphs.worldPos = Graph:new('H Pos: %s')
-
-  self.collider = { uuid = self.uuid }
-  world:add(self.collider, self.x, self.y, self.w, self.h)
+  Graph.static.graphs.playerPos = Graph:new('PL pos: %s')
+  Graph.static.graphs.playerVx = Graph:new('PL vx: %s')
 end
 
 function Player:update(dt)
-  if self.isMoving then
-    self.currentTime = self.currentTime + dt
-    
-    if self.currentTime >= self.duration then
-      self.currentTime = self.currentTime - self.duration
-    end
-  end
-
   if love.keyboard.isDown('right') then
-    self.velocity = self.velocity + self.acceleration
-    self.isMoving = true
-    self.direction = 1
-
-    local movement = math.min(self.maxSpeed, self.velocity * dt)
-    self.x = math.min(self.x + movement, CANVAS_WIDTH - self.w)
-    
-    Graph.static.graphs.heroSpeed.value = movement
+    self.vx = walkingSpeed
   elseif love.keyboard.isDown('left') then
-    self.velocity = self.velocity + self.acceleration
-    self.isMoving = true
-    self.direction = -1
-
-    local movement = math.min(self.maxSpeed, self.velocity * dt)
-    self.x = math.max(self.x - movement, 0)
-    
-    Graph.static.graphs.heroSpeed.value = movement
+    self.vx = walkingSpeed * -1
   end
 
-  Graph.static.graphs.heroVelocity.value = self.velocity
-  Graph.static.graphs.worldPos.value = string.format('%s,%s', world:getRect(self.collider))
+  local goalX = self.x + math.round(self.vx * dt)
+  local goalY = self.y + math.round(self.vy * dt)
+  
+  local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY)
+  self.x, self.y = actualX, actualY
+
+  self.animation:update(dt)
+
+  Graph.static.graphs.playerPos.value = string.format('%s,%s', world:getRect(self.collider))
+  Graph.static.graphs.playerVx.value = self.vx
 end
 
 function Player:draw()
-  local quadI
-
-  if self.isMoving then
-    quadI = math.floor(self.currentTime / self.duration * #self.quads) + 1
-  else
-    quadI = 1
-  end
-  
-  -- if DEBUG_COLLISIONS then
-  --   love.graphics.setLineWidth(1)
-  --   love.graphics.setLineStyle('rough')
-  --   love.graphics.setColor(255, 0, 0, 0.7)
-  --   love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
-  --   love.graphics.setColor(255, 255, 255)
-  -- end
-
-  love.graphics.draw(
-    self.image,
-    self.quads[quadI],
-    -- PLAYER_COLLIDER.body:getX() + self.w / 2,
-    self.x + self.w / 2,
-    -- PLAYER_COLLIDER.body:getY() - math.max(0, self.h - GRID_SIZE) + 2, -- 2 IS AN OFFSET. MAKE DYNAMIC
-    self.y - math.max(0, self.h - GRID_SIZE) + 2, -- 2 IS AN OFFSET. MAKE DYNAMIC
-    0,
-    self.direction,
-    1,
-    self.w / 2
-  )
+  self.animation:draw(image, self.x, self.y, nil, nil, nil, spriteXOffset)
 end
 
 return Player

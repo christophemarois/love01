@@ -16,17 +16,7 @@ function love.load()
   -- musicBackground:setLooping(true)
   -- musicBackground:play()
 
-  Player:new({
-    image = love.graphics.newImage("oldHero.png"),
-    x = GRID_SIZE * 5,
-    y = GRID_SIZE * 6,
-    w = 16,
-    h = 18,
-    duration = 0.55,
-    speed = 50,
-    acceleration = 2,
-    maxSpeed = 3
-  })
+  Player:new({ gridX = 1, gridY = 5 })
 
   Graph.static.graphs.fps = Graph:new('FPS: %s')
   Graph.static.graphs.ram = Graph:new('RAM: %s MB')

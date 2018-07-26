@@ -18,11 +18,15 @@ _ = require('lib/moses')
 -- http://karai17.github.io/Simple-Tiled-Implementation/index.html
 sti = require('lib/sti')
 
-
+-- https://github.com/kikito/anim8
+anim8 = require('lib/anim8')
 
 -- Pretty print anything
 local inspect = require('lib/inspect')
 log = function (obj) print(inspect(obj)) end
+
+-- lol what lua
+math.round = function(n) return n >= 0.0 and n-n%-1 or n-n% 1 end
 
 -- Debug graphs
 Graph = require('graphs')
