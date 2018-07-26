@@ -23,6 +23,8 @@ function love.load()
 end
 
 function love.update(dt)
+  Timer.update(dt)
+  
   Graph.static.graphs.fps.value = (0.75 * 1 / dt) + (0.25 * love.timer.getFPS())
   Graph.static.graphs.ram.value = collectgarbage('count') / 1024
 

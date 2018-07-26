@@ -2,17 +2,18 @@ local Player = class('Player', GameObject)
 
 -- Static config
 local walkingSpeed = 60
-local spriteRow = 3
-local spriteW = 14
-local spriteH = 23
-local spriteXOffset = 9
-local colliderYOffset = (GRID_SIZE * 2) - spriteH
+local spriteGridSize = 32
+local spriteRow = 2
+local spriteW = 10
+local spriteH = 24
+local spriteXOffset = 11
+local spriteYOffset = spriteGridSize - spriteH
 
-local gravity = 80
+local gravity = 200
 
 -- Slice sprite
 local image = love.graphics.newImage('characters.png')
-local sprite = anim8.newGrid(32, 32, image:getWidth(), image:getHeight())
+local sprite = anim8.newGrid(spriteGridSize, spriteGridSize, image:getWidth(), image:getHeight())
 
 -- Set animations
 local animations = {
@@ -45,7 +46,7 @@ function Player:initialize(options)
   self.x = (GRID_SIZE * options.gridX) + ((GRID_SIZE - self.w) / 2)
   self.y = (GRID_SIZE * options.gridY)
   self.vx = 0
-  self.vy = 0
+  self.vy = gravity
 
   self.jumpState = nil
   self.yBeforeJump = 0
@@ -54,7 +55,7 @@ function Player:initialize(options)
   self.direction = 'right'
 
   self.collider = { uuid = self.uuid }
-  world:add(self.collider, self.x, self.y + colliderYOffset, self.w, self.h)
+  world:add(self.collider, self.x, self.y, self.w, self.h)
   table.insert(map.bump_collidables, self.collider)
 
   function love.keyreleased(key)
@@ -73,8 +74,16 @@ function Player:jump ()
   if self.jumpState then return end
 
   self.yBeforeJump = self.y
-  self.vy = gravity - 200
+
+  self.vy = -250
   self.jumpState = 1
+
+  Timer.tween(0.25, self, { vy = 20 }, 'in-quad')
+
+  Timer.after(0.25, function ()
+    self.jumpState = 2
+    Timer.tween(1, self, { vy = gravity }, 'out-expo')
+  end)
 end
 
 function Player:update(dt)
@@ -103,17 +112,22 @@ function Player:update(dt)
       self.vx = speed * -1
       self.direction = 'left'
     end
-
-    if self.jumpState == 1 and (self.y < self.yBeforeJump - 40) then
-      self.vy = gravity
-      self.jumpState = 2
-    end
   end
 
   local goalX = self.x + math.round(self.vx * dt)
   local goalY = self.y + math.round(self.vy * dt)
   
-  local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY)
+  local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY, function (item, other)
+    local x, y, w, h = world:getRect(self.collider)
+
+    -- If collider is `from_top` and player is on top of it, collide.
+    -- Otherwise, do nothing
+    if other.properties.from_top and (y + h <= other.y) then
+      return 'slide'
+    end
+
+    return nil
+  end)
 
   self.x, self.y = actualX, actualY
   animations[self.direction][self.state]:update(dt)
@@ -131,7 +145,7 @@ function Player:update(dt)
 end
 
 function Player:draw()
-  animations[self.direction][self.state]:draw(image, self.x, self.y, nil, nil, nil, spriteXOffset)
+  animations[self.direction][self.state]:draw(image, self.x, self.y, nil, nil, nil, spriteXOffset, spriteYOffset)
 end
 
 return Player

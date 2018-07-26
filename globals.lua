@@ -21,25 +21,31 @@ sti = require('lib/sti')
 -- https://github.com/kikito/anim8
 anim8 = require('lib/anim8')
 
+-- http://hump.readthedocs.io/en/latest/timer.html
+Timer = require('lib/hump/timer')
+
 -- Pretty print anything
 local inspect = require('lib/inspect')
 log = function (obj) print(inspect(obj)) end
 
--- lol what lua
-math.round = function(n) return n >= 0.0 and n-n%-1 or n-n% 1 end
-
 -- Debug graphs
 Graph = require('graphs')
 
+-- Development tool
 if IS_DEV then
   lurker = require('lib/lurker')
   lovebird = require('lib/lovebird')
   print("Binding dev console on http://localhost:8000")
 end
 
-GameObject = require('objects/GameObject')
-Player = require('objects/Player')
-
+-- Additional functions
 function rgba (r, g, b, a)
   return unpack({ r / 255, g / 255, b / 255, a })
 end
+
+math.round = function(n) return n >= 0.0 and n-n%-1 or n-n% 1 end
+
+-- Classes
+GameObject = require('objects/GameObject')
+Player = require('objects/Player')
+
