@@ -5,11 +5,12 @@ local canvas = love.graphics.newCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
 function love.load()
   love.window.setMode(CANVAS_WIDTH * CANVAS_SCALE, CANVAS_HEIGHT * CANVAS_SCALE)
+  love.graphics.setBackgroundColor(rgba(255, 255, 255, 1))
 
   love.physics.setMeter(16)
-  map = sti('maps/map.lua', { 'box2d' })
-  world = love.physics.newWorld(0, 0)
-  map:box2d_init(world)
+  map = sti('maps/map.lua', { 'bump' })
+  world = bump.newWorld(16)
+  map:bump_init(world)
   
   -- musicBackground = love.audio.newSource('assets/sfx_ambience_night.mp3', 'stream')
   -- musicBackground:setLooping(true)
@@ -36,13 +37,14 @@ function love.update(dt)
   Graph.static.graphs.ram.value = collectgarbage('count') / 1024
 
   if IS_DEV then
-    lurker.update()
+    -- lurker.update()
     lovebird.update()
     Graph:updateAll(dt)
   end
 
   map:update(dt)
   GameObject:updateAll(dt)
+  -- world:update('player')
 end
 
 function love.draw()
@@ -55,10 +57,9 @@ function love.draw()
   GameObject:drawAll()
 
   -- Draw Collision Map (doesn't work with GameObject debug yet)
-  -- if DEBUG_COLLISIONS then
-  --   love.graphics.setColor(rgba(0, 255, 0, 1))
-  --   map:box2d_draw()
-  -- end
+  if DEBUG_COLLISIONS then
+    map:bump_draw(world)
+  end
 
   love.graphics.setCanvas()
   love.graphics.draw(canvas, 0, 0, 0, CANVAS_SCALE, CANVAS_SCALE)
@@ -72,5 +73,9 @@ function love.keypressed(key, scancode)
   if IS_DEV and scancode == 'd' then
     Graph:toggle()
     DEBUG_COLLISIONS = not DEBUG_COLLISIONS
+  end
+
+  if key == 'escape' then
+    love.event.quit()
   end
 end

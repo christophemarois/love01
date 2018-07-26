@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="16" tileheight="16" infinite="0" nextobjectid="1">
  <tileset firstgid="1" source="Mountain.tsx"/>
- <imagelayer name="BG" offsetx="-39" offsety="0">
-  <image source="clouds.png" width="199" height="112"/>
- </imagelayer>
- <layer name="a" width="10" height="8">
+ <layer name="a" width="10" height="8" locked="1">
+  <properties>
+   <property name="collidable" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
@@ -16,7 +16,7 @@
 9,9,9,9,9,94,94,94,9,9
 </data>
  </layer>
- <layer name="b" width="10" height="8">
+ <layer name="b" width="10" height="8" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,

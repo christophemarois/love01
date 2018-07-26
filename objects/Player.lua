@@ -40,6 +40,10 @@ function Player:initialize(options)
 
   Graph.static.graphs.heroSpeed = Graph:new('H Sp: %spx')
   Graph.static.graphs.heroVelocity = Graph:new('H Vel: %s')
+  Graph.static.graphs.worldPos = Graph:new('H Pos: %s')
+
+  self.collider = { uuid = self.uuid }
+  world:add(self.collider, self.x, self.y, self.w, self.h)
 end
 
 function Player:update(dt)
@@ -72,6 +76,7 @@ function Player:update(dt)
   end
 
   Graph.static.graphs.heroVelocity.value = self.velocity
+  Graph.static.graphs.worldPos.value = string.format('%s,%s', world:getRect(self.collider))
 end
 
 function Player:draw()
@@ -83,18 +88,20 @@ function Player:draw()
     quadI = 1
   end
   
-  if DEBUG_COLLISIONS then
-    love.graphics.setLineWidth(1)
-    love.graphics.setLineStyle('rough')
-    love.graphics.setColor(255, 0, 0, 0.7)
-    love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
-    love.graphics.setColor(255, 255, 255)
-  end
+  -- if DEBUG_COLLISIONS then
+  --   love.graphics.setLineWidth(1)
+  --   love.graphics.setLineStyle('rough')
+  --   love.graphics.setColor(255, 0, 0, 0.7)
+  --   love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+  --   love.graphics.setColor(255, 255, 255)
+  -- end
 
   love.graphics.draw(
     self.image,
     self.quads[quadI],
+    -- PLAYER_COLLIDER.body:getX() + self.w / 2,
     self.x + self.w / 2,
+    -- PLAYER_COLLIDER.body:getY() - math.max(0, self.h - GRID_SIZE) + 2, -- 2 IS AN OFFSET. MAKE DYNAMIC
     self.y - math.max(0, self.h - GRID_SIZE) + 2, -- 2 IS AN OFFSET. MAKE DYNAMIC
     0,
     self.direction,

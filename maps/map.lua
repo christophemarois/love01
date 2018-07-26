@@ -34,20 +34,25 @@ return {
       properties = {},
       terrains = {},
       tilecount = 136,
-      tiles = {}
+      tiles = {
+        {
+          id = 41,
+          objectGroup = {
+            type = "objectgroup",
+            name = "",
+            visible = true,
+            opacity = 1,
+            offsetx = 0,
+            offsety = 0,
+            draworder = "index",
+            properties = {},
+            objects = {}
+          }
+        }
+      }
     }
   },
   layers = {
-    {
-      type = "imagelayer",
-      name = "BG",
-      visible = true,
-      opacity = 1,
-      offsetx = -39,
-      offsety = 0,
-      image = "clouds.png",
-      properties = {}
-    },
     {
       type = "tilelayer",
       name = "a",
@@ -59,7 +64,9 @@ return {
       opacity = 1,
       offsetx = 0,
       offsety = 0,
-      properties = {},
+      properties = {
+        ["collidable"] = true
+      },
       encoding = "lua",
       data = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

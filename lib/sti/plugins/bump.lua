@@ -181,9 +181,14 @@ return {
 		lg.scale(sx or 1, sy or sx or 1)
 		lg.translate(math.floor(tx or 0), math.floor(ty or 0))
 
+		love.graphics.setLineWidth(1)
+		love.graphics.setColor(1, 0, 0)
+
 		for _, collidable in pairs(map.bump_collidables) do
 			lg.rectangle("line", world:getRect(collidable))
 		end
+
+		love.graphics.setColor(1, 1, 1)
 
 		lg.pop()
 	end

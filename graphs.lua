@@ -41,7 +41,7 @@ function Graph:update(dt)
     local max = 0
     for i=1, #self.data do
       local v = self.data[i]
-      if v > max then
+      if type(v) == 'number' and v > max then
         max = v
       end
     end
