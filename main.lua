@@ -65,7 +65,11 @@ function love.keypressed(key, scancode)
     DEBUG_COLLISIONS = not DEBUG_COLLISIONS
   end
 
-  if key == 'escape' then
+  if key == 'x' then
+    GameObject:get('player'):jump()
+  end
+
+  if key == 'q' then
     love.event.quit()
   end
 end
