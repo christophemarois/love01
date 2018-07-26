@@ -193,6 +193,10 @@
   <properties>
    <property name="collidable" type="bool" value="false"/>
   </properties>
+  <animation>
+   <frame tileid="93" duration="1000"/>
+   <frame tileid="127" duration="1000"/>
+  </animation>
  </tile>
  <tile id="63">
   <properties>
@@ -368,5 +372,11 @@
   <properties>
    <property name="collidable" type="bool" value="true"/>
   </properties>
+ </tile>
+ <tile id="128">
+  <animation>
+   <frame tileid="93" duration="1000"/>
+   <frame tileid="127" duration="1000"/>
+  </animation>
  </tile>
 </tileset>

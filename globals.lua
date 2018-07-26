@@ -4,7 +4,7 @@ DEBUG_COLLISIONS = false
 GRID_SIZE = 16
 CANVAS_WIDTH = GRID_SIZE * 10
 CANVAS_HEIGHT = GRID_SIZE * 8
-CANVAS_SCALE = 5
+CANVAS_SCALE = 6
 
 -- https://github.com/kikito/bump.lua
 bump = require('lib/bump')

@@ -11,6 +11,8 @@ function love.load()
   map = sti('maps/map.lua', { 'bump' })
   world = bump.newWorld(16)
   map:bump_init(world)
+
+  if map.layers.events then map.layers.events.visible = false end
   
   -- musicBackground = love.audio.newSource('assets/sfx_ambience_night.mp3', 'stream')
   -- musicBackground:setLooping(true)
@@ -24,19 +26,18 @@ end
 
 function love.update(dt)
   Timer.update(dt)
-  
+
   Graph.static.graphs.fps.value = (0.75 * 1 / dt) + (0.25 * love.timer.getFPS())
   Graph.static.graphs.ram.value = collectgarbage('count') / 1024
+
+  map:update(dt)
+  GameObject:updateAll(dt)
 
   if IS_DEV then
     -- lurker.update()
     lovebird.update()
     Graph:updateAll(dt)
   end
-
-  map:update(dt)
-  GameObject:updateAll(dt)
-  -- world:update('player')
 end
 
 function love.draw()

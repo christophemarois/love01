@@ -4,11 +4,11 @@ return {
   tiledversion = "1.1.2",
   orientation = "orthogonal",
   renderorder = "right-down",
-  width = 10,
+  width = 12,
   height = 8,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 1,
+  nextobjectid = 43,
   properties = {},
   tilesets = {
     {
@@ -261,6 +261,16 @@ return {
           id = 62,
           properties = {
             ["collidable"] = false
+          },
+          animation = {
+            {
+              tileid = 93,
+              duration = 1000
+            },
+            {
+              tileid = 127,
+              duration = 1000
+            }
           }
         },
         {
@@ -472,6 +482,19 @@ return {
           properties = {
             ["collidable"] = true
           }
+        },
+        {
+          id = 128,
+          animation = {
+            {
+              tileid = 93,
+              duration = 1000
+            },
+            {
+              tileid = 127,
+              duration = 1000
+            }
+          }
         }
       }
     }
@@ -494,7 +517,31 @@ return {
       name = "a",
       x = 0,
       y = 0,
-      width = 10,
+      width = 12,
+      height = 8,
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      properties = {},
+      encoding = "lua",
+      data = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 129, 129, 129, 129, 0, 0, 0, 0
+      }
+    },
+    {
+      type = "tilelayer",
+      name = "b",
+      x = 0,
+      y = 0,
+      width = 12,
       height = 8,
       visible = true,
       opacity = 1,
@@ -505,22 +552,22 @@ return {
       },
       encoding = "lua",
       data = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 45, 46,
-        0, 0, 0, 0, 0, 0, 0, 0, 62, 29,
-        0, 0, 0, 0, 0, 0, 0, 0, 62, 29,
-        0, 0, 0, 0, 15, 0, 0, 100, 62, 29,
-        9, 9, 9, 9, 9, 94, 94, 94, 9, 9
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 49, 50, 50, 50,
+        0, 0, 0, 0, 0, 0, 0, 0, 45, 46, 9, 9,
+        0, 0, 0, 0, 0, 0, 0, 0, 62, 29, 59, 29,
+        0, 0, 0, 0, 0, 0, 0, 0, 62, 29, 29, 29,
+        0, 0, 0, 0, 15, 0, 0, 100, 62, 29, 29, 29,
+        9, 9, 9, 9, 27, 0, 0, 26, 9, 9, 9, 9
       }
     },
     {
       type = "tilelayer",
-      name = "b",
+      name = "c",
       x = 0,
       y = 0,
-      width = 10,
+      width = 12,
       height = 8,
       visible = true,
       opacity = 1,
@@ -529,14 +576,116 @@ return {
       properties = {},
       encoding = "lua",
       data = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 76,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 93,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 93,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 110,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 117, 0, 0, 17,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 0, 0,
+        0, 118, 0, 0, 0, 0, 0, 0, 0, 110, 0, 100,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "events",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {
+        ["collidable"] = true
+      },
+      objects = {
+        {
+          id = 22,
+          name = "",
+          type = "collider",
+          shape = "rectangle",
+          x = 64,
+          y = 128,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 136,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 23,
+          name = "",
+          type = "collider",
+          shape = "rectangle",
+          x = 112,
+          y = 128,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 136,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 30,
+          name = "",
+          type = "climb",
+          shape = "rectangle",
+          x = 144,
+          y = 112,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 135,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 31,
+          name = "",
+          type = "climb",
+          shape = "rectangle",
+          x = 144,
+          y = 64,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 135,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 37,
+          name = "",
+          type = "message",
+          shape = "rectangle",
+          x = 64,
+          y = 112,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 135,
+          visible = true,
+          properties = {
+            ["text"] = "Jump with X, run with Z"
+          }
+        },
+        {
+          id = 38,
+          name = "",
+          type = "message",
+          shape = "rectangle",
+          x = 176,
+          y = 48,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          gid = 135,
+          visible = true,
+          properties = {
+            ["text"] = "This is already the end!"
+          }
+        }
       }
     }
   }

@@ -1,37 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="10" height="8" tilewidth="16" tileheight="16" infinite="0" nextobjectid="1">
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="12" height="8" tilewidth="16" tileheight="16" infinite="0" nextobjectid="43">
  <tileset firstgid="1" source="Mountain.tsx"/>
- <imagelayer name="BG" locked="1">
+ <imagelayer name="BG">
   <image source="clouds.png" width="199" height="112"/>
   <properties>
    <property name="collidable" type="bool" value="false"/>
   </properties>
  </imagelayer>
- <layer name="a" width="10" height="8" locked="1">
+ <layer name="a" width="12" height="8">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,129,129,129,129,0,0,0,0
+</data>
+ </layer>
+ <layer name="b" width="12" height="8">
   <properties>
    <property name="collidable" type="bool" value="false"/>
   </properties>
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,45,46,
-0,0,0,0,0,0,0,0,62,29,
-0,0,0,0,0,0,0,0,62,29,
-0,0,0,0,15,0,0,100,62,29,
-9,9,9,9,9,94,94,94,9,9
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,49,50,50,50,
+0,0,0,0,0,0,0,0,45,46,9,9,
+0,0,0,0,0,0,0,0,62,29,59,29,
+0,0,0,0,0,0,0,0,62,29,29,29,
+0,0,0,0,15,0,0,100,62,29,29,29,
+9,9,9,9,27,0,0,26,9,9,9,9
 </data>
  </layer>
- <layer name="b" width="10" height="8" locked="1">
+ <layer name="c" width="12" height="8">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,76,
-0,0,0,0,0,0,0,0,0,93,
-0,0,0,0,0,0,0,0,0,93,
-0,0,0,0,0,0,0,0,0,110,
-0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,117,0,0,17,
+0,0,0,0,0,0,0,0,0,76,0,0,
+0,0,0,0,0,0,0,0,0,93,0,0,
+0,0,0,0,0,0,0,0,0,93,0,0,
+0,118,0,0,0,0,0,0,0,110,0,100,
+0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="events">
+  <properties>
+   <property name="collidable" type="bool" value="true"/>
+  </properties>
+  <object id="22" type="collider" gid="136" x="64" y="128" width="16" height="16"/>
+  <object id="23" type="collider" gid="136" x="112" y="128" width="16" height="16"/>
+  <object id="30" type="climb" gid="135" x="144" y="112" width="16" height="16"/>
+  <object id="31" type="climb" gid="135" x="144" y="64" width="16" height="16"/>
+  <object id="37" type="message" gid="135" x="64" y="112" width="16" height="16">
+   <properties>
+    <property name="text" value="Jump with X, run with Z"/>
+   </properties>
+  </object>
+  <object id="38" type="message" gid="135" x="176" y="48" width="16" height="16">
+   <properties>
+    <property name="text" value="This is already the end!"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

@@ -182,9 +182,14 @@ return {
 		lg.translate(math.floor(tx or 0), math.floor(ty or 0))
 
 		love.graphics.setLineWidth(1)
-		love.graphics.setColor(1, 0, 0)
 
 		for _, collidable in pairs(map.bump_collidables) do
+			if collidable.layer and collidable.layer.name == 'events' then
+				love.graphics.setColor(0, 0, 1)
+			else
+				love.graphics.setColor(1, 0, 0)
+			end
+
 			lg.rectangle("line", world:getRect(collidable))
 		end
 

@@ -2,11 +2,13 @@ local Player = class('Player', GameObject)
 
 -- Static config
 local walkingSpeed = 60
+local runningSpeed = walkingSpeed * 1.85
+
 local spriteGridSize = 32
-local spriteRow = 2
-local spriteW = 10
+local spriteRow = 3
+local spriteW = 6
 local spriteH = 24
-local spriteXOffset = 11
+local spriteXOffset = 13
 local spriteYOffset = spriteGridSize - spriteH
 
 local gravity = 200
@@ -20,10 +22,7 @@ local animations = {
   right = {
     idle = anim8.newAnimation(sprite(1, spriteRow), 1),
     walking = anim8.newAnimation(sprite('1-4', spriteRow), 0.1),
-    jumpPrepare = anim8.newAnimation(sprite(5, spriteRow), 1),
-    jumpUp = anim8.newAnimation(sprite(6, spriteRow), 1),
-    jumpDuring = anim8.newAnimation(sprite(7, spriteRow), 1),
-    jumpDown = anim8.newAnimation(sprite(8, spriteRow), 1),
+    jumping = anim8.newAnimation(sprite(5, spriteRow), 1),
     running = anim8.newAnimation(sprite('15-18', spriteRow), 0.1),
     climbing = anim8.newAnimation(sprite('19-22', spriteRow), 0.1),
     idleBack = anim8.newAnimation(sprite(1, spriteRow), 1),
@@ -47,9 +46,11 @@ function Player:initialize(options)
   self.y = (GRID_SIZE * options.gridY)
   self.vx = 0
   self.vy = gravity
+  self.speed = walkingSpeed
 
   self.jumpState = nil
   self.yBeforeJump = 0
+  self.wasRunningBeforeJump = false
 
   self.state = 'idle'
   self.direction = 'right'
@@ -66,23 +67,30 @@ function Player:initialize(options)
   end
 
   Graph.static.graphs.playerPos = Graph:new('PL pos: %s')
-  Graph.static.graphs.playerVx = Graph:new('PL vx: %s')
-  Graph.static.graphs.playerVy = Graph:new('PL vy: %s')
+end
+
+function Player:isOnGround ()
+  local actualX, actualY, cols, len = world:check(self.collider, self.x, self.y + 1)
+  return len > 0
 end
 
 function Player:jump ()
   if self.jumpState then return end
-
+  if not self:isOnGround() then return end
+  
+  self.wasRunningBeforeJump = self.state == 'running'
   self.yBeforeJump = self.y
 
-  self.vy = -250
+  self.vy = -275
   self.jumpState = 1
 
-  Timer.tween(0.25, self, { vy = 20 }, 'in-quad')
+  self.state = 'jumping'
 
-  Timer.after(0.25, function ()
+  Timer.tween(0.20, self, { vy = 20 }, 'in-circ')
+
+  Timer.after(0.20, function ()
     self.jumpState = 2
-    Timer.tween(1, self, { vy = gravity }, 'out-expo')
+    Timer.tween(1, self, { vy = gravity + 100 }, 'out-expo')
   end)
 end
 
@@ -91,12 +99,12 @@ function Player:update(dt)
     local speed
 
     if self.jumpState then
-      self.state = 'jumpDuring'
-      speed = walkingSpeed
+      speed = self.wasRunningBeforeJump and runningSpeed or walkingSpeed
+      speed = speed * 1.5
     else
       if love.keyboard.isDown('z') then
         self.state = 'running'
-        speed = walkingSpeed * 1.85
+        speed = runningSpeed
       else
         self.state = 'walking'
         speed = walkingSpeed
@@ -120,6 +128,10 @@ function Player:update(dt)
   local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY, function (item, other)
     local x, y, w, h = world:getRect(self.collider)
 
+    if other.type == 'collider' then
+      return 'slide'
+    end
+
     -- If collider is `from_top` and player is on top of it, collide.
     -- Otherwise, do nothing
     if other.properties.from_top and (y + h <= other.y) then
@@ -129,19 +141,18 @@ function Player:update(dt)
     return nil
   end)
 
-  self.x, self.y = actualX, actualY
-  animations[self.direction][self.state]:update(dt)
-
   if self.jumpState == 2 then
     for i = 1, len do
       local other = cols[i].other
+      self.state = 'idle'
       self.jumpState = nil
     end
   end
 
+  self.x, self.y = actualX, actualY
+  animations[self.direction][self.state]:update(dt)
+
   Graph.static.graphs.playerPos.value = string.format('%s,%s', world:getRect(self.collider))
-  Graph.static.graphs.playerVx.value = self.vx
-  Graph.static.graphs.playerVy.value = self.vy
 end
 
 function Player:draw()
