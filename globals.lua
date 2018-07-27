@@ -31,9 +31,12 @@ log = function (obj) print(inspect(obj)) end
 -- Debug graphs
 Graph = require('graphs')
 
--- Development tool
+-- Development tools
 if IS_DEV then
+  -- https://github.com/rxi/lurker
   lurker = require('lib/lurker')
+  
+  -- https://github.com/rxi/lovebird
   lovebird = require('lib/lovebird')
   print("Binding dev console on http://localhost:8000")
 end
@@ -48,4 +51,5 @@ math.round = function(n) return n >= 0.0 and n-n%-1 or n-n% 1 end
 -- Classes
 GameObject = require('objects/GameObject')
 Player = require('objects/Player')
+Dialog = require('objects/Dialog')
 

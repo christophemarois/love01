@@ -2,7 +2,10 @@ local Player = class('Player', GameObject)
 
 -- Static config
 local walkingSpeed = 60
-local runningSpeed = walkingSpeed * 1.85
+local runningSpeed = walkingSpeed * 1.95
+local jumpHeight = 46
+local jumpDuration = 0.2
+local jumpRunningMultiplier = 1.25
 
 local spriteGridSize = 32
 local spriteRow = 3
@@ -12,6 +15,10 @@ local spriteXOffset = 13
 local spriteYOffset = spriteGridSize - spriteH
 
 local gravity = 200
+
+-- Global references
+local jumpTimerHandle = nil
+local respawning = false
 
 -- Slice sprite
 local image = love.graphics.newImage('characters.png')
@@ -61,7 +68,7 @@ function Player:initialize(options)
 
   function love.keyreleased(key)
     if key == "right" or key == "left" then
-      self.state = 'idle'
+      if not self.jumpState then self.state = 'idle' end
       self.vx = 0
     end
   end
@@ -69,6 +76,8 @@ function Player:initialize(options)
   Graph.static.graphs.playerPos = Graph:new('PL pos: %s')
 end
 
+-- NOTE: THIS MIGHT ALSO RETURN TRUE WITH NON-COLLIDABLE EVENT OBJECTS
+-- THIS IS NOT DESIRABLE
 function Player:isOnGround ()
   local actualX, actualY, cols, len = world:check(self.collider, self.x, self.y + 1)
   return len > 0
@@ -81,46 +90,52 @@ function Player:jump ()
   self.wasRunningBeforeJump = self.state == 'running'
   self.yBeforeJump = self.y
 
-  self.vy = -275
-  self.jumpState = 1
+  self.vy = -1 * jumpHeight / jumpDuration
 
+  -- If player was running before jump, it will go farther, but less high
+  if self.wasRunningBeforeJump then self.vy = self.vy / jumpRunningMultiplier end
+
+  self.jumpState = 1
   self.state = 'jumping'
 
-  Timer.tween(0.20, self, { vy = 20 }, 'in-circ')
-
-  Timer.after(0.20, function ()
+  jumpTimerHandle = Timer.tween(jumpDuration, self, { vy = 0 }, 'in-expo', function ()
     self.jumpState = 2
-    Timer.tween(1, self, { vy = gravity + 100 }, 'out-expo')
+    jumpTimerHandle = Timer.tween(jumpDuration, self, { vy = gravity }, 'out-quad')
   end)
 end
 
 function Player:update(dt)
-  if self.jumpState or love.keyboard.isDown('right') or love.keyboard.isDown('left') then
-    local speed
+  if respawning then
+    self.vx = 0
+  else
+    if self.jumpState or love.keyboard.isDown('right') or love.keyboard.isDown('left') then
+      local speed
 
-    if self.jumpState then
-      speed = self.wasRunningBeforeJump and runningSpeed or walkingSpeed
-      speed = speed * 1.5
-    else
-      if love.keyboard.isDown('z') then
-        self.state = 'running'
-        speed = runningSpeed
+      if self.jumpState then
+        speed = self.wasRunningBeforeJump and runningSpeed or walkingSpeed
+        speed = speed * jumpRunningMultiplier
       else
-        self.state = 'walking'
-        speed = walkingSpeed
+        if love.keyboard.isDown('z') then
+          self.state = 'running'
+          speed = runningSpeed
+        else
+          self.state = 'walking'
+          speed = walkingSpeed
+        end
+      end
+
+      if love.keyboard.isDown('right') then
+        self.vx = speed
+        self.direction = 'right'
+      end
+
+      if love.keyboard.isDown('left') then
+        self.vx = speed * -1
+        self.direction = 'left'
       end
     end
-
-    if love.keyboard.isDown('right') then
-      self.vx = speed
-      self.direction = 'right'
-    end
-
-    if love.keyboard.isDown('left') then
-      self.vx = speed * -1
-      self.direction = 'left'
-    end
   end
+  
 
   local goalX = self.x + math.round(self.vx * dt)
   local goalY = self.y + math.round(self.vy * dt)
@@ -141,22 +156,37 @@ function Player:update(dt)
     return nil
   end)
 
+  if len > 0 then
+    respawning = false
+  end
+
   if self.jumpState == 2 then
     for i = 1, len do
       local other = cols[i].other
       self.state = 'idle'
       self.jumpState = nil
+      self.vy = gravity
+      Timer.cancel(jumpTimerHandle)
     end
   end
 
   self.x, self.y = actualX, actualY
   animations[self.direction][self.state]:update(dt)
 
+  if (not respawning) and self.y > CANVAS_HEIGHT then
+    respawning = true
+
+    Timer.after(0.25, function ()
+      self.x = 10
+      self.y = -1 * self.h
+    end)
+  end
+
   Graph.static.graphs.playerPos.value = string.format('%s,%s', world:getRect(self.collider))
 end
 
 function Player:draw()
-  animations[self.direction][self.state]:draw(image, self.x, self.y, nil, nil, nil, spriteXOffset, spriteYOffset)
+  animations[self.direction][self.state]:draw(image, math.round(self.x), math.round(self.y), nil, nil, nil, spriteXOffset, spriteYOffset)
 end
 
 return Player
