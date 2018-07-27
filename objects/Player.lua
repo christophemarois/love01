@@ -137,7 +137,7 @@ function Player:update(dt)
   end
   
 
-  local goalX = self.x + math.round(self.vx * dt)
+  local goalX = math.max(0, math.min(CANVAS_WIDTH - self.w, self.x + math.round(self.vx * dt)))
   local goalY = self.y + math.round(self.vy * dt)
   
   local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY, function (item, other)
@@ -169,13 +169,7 @@ function Player:update(dt)
     :value()[1]
   
   if message then
-    local text = message.other.properties.text
-
-    -- Make position dynamic
-    -- local x = message.other.x
-    -- local y = message.other.y
-
-    Dialog.show(text, 29, 60)
+    Dialog.showEvent(text, message.other)
   else
     Dialog.destroy()
   end

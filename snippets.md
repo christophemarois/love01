@@ -9,6 +9,5 @@ self.y = (y / CANVAS_SCALE) - (self.h / 2)
 ```
 
 TODO:
-1. climbing
-2. bounds collision
-3. camera
+1. bounds collision
+2. camera
