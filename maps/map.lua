@@ -667,7 +667,7 @@ return {
           gid = 135,
           visible = true,
           properties = {
-            ["text"] = "Jump with X, run with Z"
+            ["text"] = "[x] jump [z] run"
           }
         },
         {

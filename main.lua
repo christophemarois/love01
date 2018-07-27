@@ -20,8 +20,6 @@ function love.load()
 
   Player:new({ gridX = 1, gridY = 5 })
 
-  Dialog.show('test', 10, 10)
-
   Graph.static.graphs.fps = Graph:new('FPS: %s')
   Graph.static.graphs.ram = Graph:new('RAM: %s MB')
 end

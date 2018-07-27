@@ -27,7 +27,7 @@ local sprite = anim8.newGrid(spriteGridSize, spriteGridSize, image:getWidth(), i
 -- Set animations
 local animations = {
   right = {
-    idle = anim8.newAnimation(sprite(1, spriteRow), 1),
+    idle = anim8.newAnimation(sprite(1, spriteRow, 8, spriteRow), { 3, 0.2 }),
     walking = anim8.newAnimation(sprite('1-4', spriteRow), 0.1),
     jumping = anim8.newAnimation(sprite(5, spriteRow), 1),
     running = anim8.newAnimation(sprite('15-18', spriteRow), 0.1),
@@ -147,6 +147,10 @@ function Player:update(dt)
       return 'slide'
     end
 
+    if other.type == 'message' then
+      return 'cross'
+    end
+
     -- If collider is `from_top` and player is on top of it, collide.
     -- Otherwise, do nothing
     if other.properties.from_top and (y + h <= other.y) then
@@ -160,13 +164,29 @@ function Player:update(dt)
     respawning = false
   end
 
+  local message = _.chain(cols)
+    :filter(function (i, col) return col.other.type == 'message' end)
+    :value()[1]
+  
+  if message then
+    local text = message.other.properties.text
+
+    -- Make position dynamic
+    -- local x = message.other.x
+    -- local y = message.other.y
+
+    Dialog.show(text, 29, 60)
+  else
+    Dialog.destroy()
+  end
+
   if self.jumpState == 2 then
     for i = 1, len do
       local other = cols[i].other
       self.state = 'idle'
       self.jumpState = nil
-      self.vy = gravity
       Timer.cancel(jumpTimerHandle)
+      self.vy = gravity
     end
   end
 

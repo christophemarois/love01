@@ -56,7 +56,7 @@
   <object id="31" type="climb" gid="135" x="144" y="64" width="16" height="16"/>
   <object id="37" type="message" gid="135" x="64" y="112" width="16" height="16">
    <properties>
-    <property name="text" value="Jump with X, run with Z"/>
+    <property name="text" value="[x] jump [z] run"/>
    </properties>
   </object>
   <object id="38" type="message" gid="135" x="176" y="48" width="16" height="16">
