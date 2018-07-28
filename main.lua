@@ -27,7 +27,7 @@ function love.load()
   camera:setBounds(0, 0, map.width * map.tilewidth, map.height * map.tileheight)
   camera:setFollowLerp(1)
 
-  player = Player:new({ gridX = 14, gridY = 3 })
+  player = Player:new({ gridX = 9, gridY = 3 })
 
   Graph.static.graphs.camera = Graph:new('Cam: %s')
   Graph.static.graphs.fps = Graph:new('FPS: %s')

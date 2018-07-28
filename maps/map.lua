@@ -8,7 +8,7 @@ return {
   height = 11,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 60,
+  nextobjectid = 65,
   properties = {},
   tilesets = {
     {
@@ -562,7 +562,7 @@ return {
         0, 0, 0, 0, 0, 0, 0, 0, 62, 64, 0, 0, 0, 0, 28, 59, 29, 59, 29, 29,
         0, 66, 67, 68, 0, 0, 0, 0, 62, 64, 0, 0, 0, 0, 28, 29, 29, 29, 29, 29,
         9, 9, 9, 9, 27, 0, 0, 100, 62, 64, 0, 0, 0, 0, 28, 29, 29, 29, 25, 29,
-        9, 9, 9, 9, 9, 9, 9, 9, 9, 27, 0, 0, 0, 26, 9, 9, 9, 9, 9, 9,
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 27, 0, 0, 26, 9, 9, 9, 9, 9, 9,
         29, 29, 29, 29, 30, 0, 0, 28, 29, 30, 0, 0, 0, 0, 60, 43, 43, 43, 43, 46
       }
     },
@@ -608,7 +608,7 @@ return {
         {
           id = 30,
           name = "",
-          type = "climb",
+          type = "climb_bottom",
           shape = "rectangle",
           x = 144,
           y = 144,
@@ -617,12 +617,14 @@ return {
           rotation = 0,
           gid = 135,
           visible = true,
-          properties = {}
+          properties = {
+            ["text"] = "[▲] climb"
+          }
         },
         {
           id = 31,
           name = "",
-          type = "climb",
+          type = "climb_top",
           shape = "rectangle",
           x = 144,
           y = 96,
@@ -636,7 +638,7 @@ return {
         {
           id = 37,
           name = "",
-          type = "message",
+          type = "",
           shape = "rectangle",
           x = 64,
           y = 128,
@@ -652,7 +654,7 @@ return {
         {
           id = 50,
           name = "",
-          type = "message",
+          type = "",
           shape = "rectangle",
           x = 128,
           y = 80,
@@ -668,9 +670,9 @@ return {
         {
           id = 59,
           name = "",
-          type = "message",
+          type = "",
           shape = "rectangle",
-          x = 240,
+          x = 242,
           y = 80,
           width = 16,
           height = 16,
@@ -678,7 +680,7 @@ return {
           gid = 135,
           visible = true,
           properties = {
-            ["text"] = "You did it!\nHow can I improve\nthis prototype?."
+            ["text"] = "You did it!"
           }
         }
       }

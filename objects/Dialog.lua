@@ -1,12 +1,14 @@
-local font = love.graphics.newFont('assets/Novitiate.ttf', 16)
+local font = love.graphics.newFont('assets/HeartbitXX.ttf', 16)
+font:setLineHeight(0.7)
 font:setFilter('nearest', 'nearest')
 
 local paddingW = 4
-local paddingH = 0
+local paddingH = 3
 local triangleW = 6
 local triangleH = 7
 
-local offsetTop = 17
+local offsetTop = -20
+local textOffsetTop = -3
 
 local timer = nil
 local Dialog = { current = nil }
@@ -40,7 +42,7 @@ Dialog.draw = function ()
   local canvas = love.graphics.newCanvas(canvasWidth, canvasHeight)
 
   canvas:renderTo(function ()
-    love.graphics.setColor(rgba(0, 0, 0, 0.6))
+    love.graphics.setColor(rgba(0, 0, 0, 0.7))
     love.graphics.rectangle('fill', 0, 0, textW + paddingW * 2, textH + paddingH * 2)
 
     love.graphics.polygon('fill',
@@ -50,13 +52,13 @@ Dialog.draw = function ()
     )
     
     love.graphics.setColor(rgba(0, 0, 0, 1))
-    love.graphics.draw(Dialog.current.text, paddingW + 1, paddingH + 1)
+    love.graphics.draw(Dialog.current.text, paddingW + 1, paddingH + 1 + textOffsetTop)
     love.graphics.setColor(rgba(255, 255, 255, 1))
-    love.graphics.draw(Dialog.current.text, paddingW + 0, paddingH + 0)
+    love.graphics.draw(Dialog.current.text, paddingW + 0, paddingH + 0 + textOffsetTop)
   end)
 
   local canvasX = cameraX - (textW / 2) + (Dialog.current.w / 2) - paddingW
-  local canvasY = cameraY - textH - paddingH - offsetTop
+  local canvasY = cameraY - textH - paddingH + offsetTop
 
   love.graphics.setColor(rgba(255, 255, 255, 1))
   love.graphics.setBlendMode('alpha', 'premultiplied')

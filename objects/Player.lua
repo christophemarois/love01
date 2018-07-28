@@ -10,7 +10,7 @@ local jumpRunningMultiplier = 1.25
 local spriteGridSize = 32
 local spriteRow = 3
 local spriteW = 6
-local spriteH = 24
+local spriteH = 16
 local spriteXOffset = 13
 local spriteYOffset = spriteGridSize - spriteH
 
@@ -18,10 +18,9 @@ local gravity = 200
 
 -- Global references
 local jumpTimerHandle = nil
-local respawning = false
 
 -- Slice sprite
-local image = love.graphics.newImage('characters.png')
+local image = love.graphics.newImage('assets/characters.png')
 local sprite = anim8.newGrid(spriteGridSize, spriteGridSize, image:getWidth(), image:getHeight())
 
 -- Set animations
@@ -57,6 +56,7 @@ function Player:initialize(options)
 
   self.jumpState = nil
   self.wasRunningBeforeJump = false
+  self.controlsEnabled = true
 
   self.state = 'idle'
   self.direction = 'right'
@@ -67,7 +67,7 @@ function Player:initialize(options)
 
   function love.keyreleased(key)
     if key == "right" or key == "left" then
-      if not self.jumpState then self.state = 'idle' end
+      if not self.jumpState and self.state ~= 'climbing' then self.state = 'idle' end
       self.vx = 0
     end
   end
@@ -80,6 +80,14 @@ end
 function Player:isOnGround ()
   local actualX, actualY, cols, len = world:check(self.collider, self.x, self.y + 1)
   return len > 0
+end
+
+function Player:getClimbEvent ()
+  local actualX, actualY, cols, len = world:check(self.collider, self.x, self.y, function (item, other)
+    return (other.type == 'climb_top' or other.type == 'climb_bottom') and 'cross' or nil
+  end)
+
+  return len > 0 and cols[1].other or nil
 end
 
 function Player:jump ()
@@ -110,35 +118,66 @@ function Player:jump ()
 end
 
 function Player:update(dt)
-  if respawning then
-    self.vx = 0
-  else
-    if self.jumpState or love.keyboard.isDown('right') or love.keyboard.isDown('left') then
-      local speed
-
-      if self.jumpState then
-        speed = self.wasRunningBeforeJump and runningSpeed or walkingSpeed
-        speed = speed * jumpRunningMultiplier
+  if self.state ~= 'climbing' then
+    if self.jumpState then
+      self.speed = self.wasRunningBeforeJump and runningSpeed or walkingSpeed
+      self.speed = self.speed * jumpRunningMultiplier
+    else
+      if love.keyboard.isDown('z') then
+        self.state = 'running'
+        self.speed = runningSpeed
       else
-        if love.keyboard.isDown('z') then
-          self.state = 'running'
-          speed = runningSpeed
-        else
-          self.state = 'walking'
-          speed = walkingSpeed
-        end
-      end
-
-      if love.keyboard.isDown('right') then
-        self.vx = speed
-        self.direction = 'right'
-      end
-
-      if love.keyboard.isDown('left') then
-        self.vx = speed * -1
-        self.direction = 'left'
+        self.state = 'walking'
+        self.speed = walkingSpeed
       end
     end
+  end
+
+  if self.controlsEnabled and love.keyboard.isDown('up') then
+    local climbEvent = self:getClimbEvent()
+
+    if self.state == 'climbing' then
+      self.y = self.y - 1
+
+      if climbEvent and (climbEvent.type == 'climb_top') and (self.y < climbEvent.y) then
+        self.controlsEnabled = false
+
+        Timer.tween(0.2, self, { y = self.y - GRID_SIZE * 2 }, 'out-expo', function ()
+          self.controlsEnabled = true
+          self.state = 'idle'
+          self.vy = gravity
+        end)
+      end
+    elseif climbEvent and (climbEvent.type == 'climb_bottom') then
+      self.state = 'climbing'
+      self.vy = 0
+    end
+  end
+
+  if self.controlsEnabled and love.keyboard.isDown('down') then
+    local climbEvent = self:getClimbEvent()
+
+    if self.state == 'climbing' then
+      self.y = self.y + 1
+
+      if climbEvent and (climbEvent.type == 'climb_bottom') then
+        self.state = 'idle'
+        self.vy = gravity
+      end
+    elseif climbEvent and (climbEvent.type == 'climb_bottom') then
+      self.state = 'climbing'
+      self.vy = 0
+    end
+  end
+
+  if self.controlsEnabled and self.state ~= 'climbing' and love.keyboard.isDown('right') then
+    self.vx = self.speed
+    self.direction = 'right'
+  end
+
+  if self.controlsEnabled and self.state ~= 'climbing' and love.keyboard.isDown('left') then
+    self.vx = self.speed * -1
+    self.direction = 'left'
   end
 
   local goalX = math.max(camera.bounds_min_x, math.min(camera.bounds_max_x - self.w, self.x + math.round(self.vx * dt)))
@@ -151,7 +190,7 @@ function Player:update(dt)
       return 'slide'
     end
 
-    if other.type == 'message' then
+    if other.properties.text then
       return 'cross'
     end
 
@@ -164,16 +203,13 @@ function Player:update(dt)
     return nil
   end)
 
-  if len > 0 then
-    respawning = false
-  end
-
-  local message = _.chain(cols)
-    :filter(function (i, col) return col.other.type == 'message' end)
+  local eventWithMessage = _.chain(cols)
+    :filter(function (i, col) return col.other.properties.text end)
+    :map(function (i, col) return col.other end)
     :value()[1]
   
-  if message then
-    Dialog.showEvent(text, message.other)
+  if eventWithMessage then
+    Dialog.showEvent(text, eventWithMessage)
   else
     Dialog.destroy()
   end
@@ -190,15 +226,6 @@ function Player:update(dt)
 
   self.x, self.y = actualX, actualY
   animations[self.direction][self.state]:update(dt)
-
-  if (not respawning) and self.y > camera.bounds_max_y then
-    respawning = true
-
-    Timer.after(0.25, function ()
-      self.x = 10
-      self.y = -1 * self.h
-    end)
-  end
 
   Graph.static.graphs.playerPos.value = string.format('%s,%s', world:getRect(self.collider))
 end
