@@ -9,12 +9,12 @@ local triangleH = 7
 local offsetTop = 17
 
 local timer = nil
-local exports = { current = nil }
+local Dialog = { current = nil }
 
-exports.showEvent = function (message, event)
-  if exports.current then exports.destroy() end
+Dialog.showEvent = function (message, event)
+  if Dialog.current then Dialog.destroy() end
 
-  exports.current = {
+  Dialog.current = {
     text = love.graphics.newText(font, event.properties.text),
     x = event.x,
     y = event.y,
@@ -23,36 +23,49 @@ exports.showEvent = function (message, event)
   }
 end
 
-exports.destroy = function ()
-  exports.current = nil
+Dialog.destroy = function ()
+  Dialog.current = nil
 end
 
-exports.draw = function ()
-  if not exports.current then return end
+Dialog.draw = function ()
+  if not Dialog.current then return end
 
-  local textW, textH = exports.current.text:getDimensions()
-  local canvas = love.graphics.newCanvas(textW + paddingW * 2, textH + paddingH * 2 + triangleH)
+  local cameraX, cameraY = camera:toCameraCoords(Dialog.current.x, Dialog.current.y)
+
+  local textW, textH = Dialog.current.text:getDimensions()
+  
+  local canvasWidth = textW + paddingW * 2
+  local canvasHeight = textH + paddingH * 2 + triangleH
+
+  local canvas = love.graphics.newCanvas(canvasWidth, canvasHeight)
 
   canvas:renderTo(function ()
-    love.graphics.setColor(0, 0, 0, 0.4)
+    love.graphics.setColor(rgba(0, 0, 0, 0.6))
     love.graphics.rectangle('fill', 0, 0, textW + paddingW * 2, textH + paddingH * 2)
 
     love.graphics.polygon('fill',
       textW / 2, textH + paddingH * 2,
       textW / 2 + triangleW, textH + paddingH * 2,
-      textW / 2 + triangleW / 2, textH + paddingH * 2 + triangleH
+      textW / 2 + triangleW / 2, canvasHeight
     )
     
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.draw(exports.current.text, paddingW + 1, paddingH + 1)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(exports.current.text, paddingW + 0, paddingH + 0)
+    love.graphics.setColor(rgba(0, 0, 0, 1))
+    love.graphics.draw(Dialog.current.text, paddingW + 1, paddingH + 1)
+    love.graphics.setColor(rgba(255, 255, 255, 1))
+    love.graphics.draw(Dialog.current.text, paddingW + 0, paddingH + 0)
   end)
 
-  local canvasX = exports.current.x - (textW / 2) + (exports.current.w / 2) - paddingW
-  local canvasY = exports.current.y - textH - paddingH - offsetTop
+  local canvasX = cameraX - (textW / 2) + (Dialog.current.w / 2) - paddingW
+  local canvasY = cameraY - textH - paddingH - offsetTop
 
+  love.graphics.setColor(rgba(255, 255, 255, 1))
+  love.graphics.setBlendMode('alpha', 'premultiplied')
   love.graphics.draw(canvas, canvasX, canvasY)
+
+  if DEBUG_COLLISIONS then
+    love.graphics.setColor(0, 0, 1)
+    love.graphics.rectangle('line', canvasX, canvasY, canvasWidth, canvasHeight)
+  end
 end
 
-return exports
+return Dialog

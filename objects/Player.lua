@@ -56,7 +56,6 @@ function Player:initialize(options)
   self.speed = walkingSpeed
 
   self.jumpState = nil
-  self.yBeforeJump = 0
   self.wasRunningBeforeJump = false
 
   self.state = 'idle'
@@ -88,8 +87,9 @@ function Player:jump ()
   if not self:isOnGround() then return end
   
   self.wasRunningBeforeJump = self.state == 'running'
-  self.yBeforeJump = self.y
 
+  -- Set a y velocity that will make the player go up exactly `jumpHeight`
+  -- pixels during a `jumpDuration` seconds ascent
   self.vy = -1 * jumpHeight / jumpDuration
 
   -- If player was running before jump, it will go farther, but less high
@@ -98,7 +98,12 @@ function Player:jump ()
   self.jumpState = 1
   self.state = 'jumping'
 
-  jumpTimerHandle = Timer.tween(jumpDuration, self, { vy = 0 }, 'in-expo', function ()
+  -- Go up for jumpDuration
+  jumpTimerHandle = Timer.tween(jumpDuration, self, { vy = 0 }, 'in-circ', function ()
+
+    -- We've reach the jump apex. Go change jumpState to 2 and reset
+    -- y velocity to default gravity. It will now be up to the collision detector
+    -- to detect jump's end
     self.jumpState = 2
     jumpTimerHandle = Timer.tween(jumpDuration, self, { vy = gravity }, 'out-quad')
   end)
@@ -135,9 +140,8 @@ function Player:update(dt)
       end
     end
   end
-  
 
-  local goalX = math.max(0, math.min(CANVAS_WIDTH - self.w, self.x + math.round(self.vx * dt)))
+  local goalX = math.max(camera.bounds_min_x, math.min(camera.bounds_max_x - self.w, self.x + math.round(self.vx * dt)))
   local goalY = self.y + math.round(self.vy * dt)
   
   local actualX, actualY, cols, len = world:move(self.collider, goalX, goalY, function (item, other)
@@ -187,7 +191,7 @@ function Player:update(dt)
   self.x, self.y = actualX, actualY
   animations[self.direction][self.state]:update(dt)
 
-  if (not respawning) and self.y > CANVAS_HEIGHT then
+  if (not respawning) and self.y > camera.bounds_max_y then
     respawning = true
 
     Timer.after(0.25, function ()

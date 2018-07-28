@@ -4,7 +4,7 @@ DEBUG_COLLISIONS = false
 GRID_SIZE = 16
 CANVAS_WIDTH = GRID_SIZE * 10
 CANVAS_HEIGHT = GRID_SIZE * 8
-CANVAS_SCALE = 6
+CANVAS_SCALE = 5
 
 -- https://github.com/kikito/bump.lua
 bump = require('lib/bump')
@@ -24,6 +24,9 @@ anim8 = require('lib/anim8')
 -- http://hump.readthedocs.io/en/latest/timer.html
 Timer = require('lib/hump/timer')
 
+-- https://github.com/SSYGEN/STALKER-X#quick-start
+Camera = require('lib/camera')
+
 -- Pretty print anything
 local inspect = require('lib/inspect')
 log = function (obj) print(inspect(obj)) end
@@ -33,9 +36,6 @@ Graph = require('graphs')
 
 -- Development tools
 if IS_DEV then
-  -- https://github.com/rxi/lurker
-  lurker = require('lib/lurker')
-  
   -- https://github.com/rxi/lovebird
   lovebird = require('lib/lovebird')
   print("Binding dev console on http://localhost:8000")
