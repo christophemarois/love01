@@ -1,4 +1,6 @@
-# love01
+This is the source code for my [blog post](https://github.com/christophemarois/gamedev-blog/issues/1).
+
+# Learning game development
 
 ![screenshot](https://media.giphy.com/media/dgsxhGP8GQR7B2AiPr/giphy.gif)
 
