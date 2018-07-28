@@ -35,6 +35,15 @@ local animations = {
   }
 }
 
+local sounds = {
+  jump = {
+    love.audio.newSource("assets/jump1.wav", "static"),
+    love.audio.newSource("assets/jump2.wav", "static"),
+    love.audio.newSource("assets/jump3.wav", "static"),
+    love.audio.newSource("assets/jump4.wav", "static")
+  }
+}
+
 -- Clone and flip all animations for reverse direction
 animations.left = _.map(animations.right, function(name, animation)
   return animation:clone():flipH()
@@ -93,6 +102,10 @@ end
 function Player:jump ()
   if self.jumpState then return end
   if not self:isOnGround() then return end
+
+  local sound = _.sample(sounds.jump)
+  sound:setVolume(0.5)
+  sound:play()
   
   self.wasRunningBeforeJump = self.state == 'running'
 
@@ -155,18 +168,9 @@ function Player:update(dt)
   end
 
   if self.controlsEnabled and love.keyboard.isDown('down') then
-    local climbEvent = self:getClimbEvent()
-
     if self.state == 'climbing' then
-      self.y = self.y + 1
-
-      if climbEvent and (climbEvent.type == 'climb_bottom') then
-        self.state = 'idle'
-        self.vy = gravity
-      end
-    elseif climbEvent and (climbEvent.type == 'climb_bottom') then
-      self.state = 'climbing'
-      self.vy = 0
+      self.state = 'idle'
+      self.vy = gravity
     end
   end
 

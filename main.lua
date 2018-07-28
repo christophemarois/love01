@@ -16,9 +16,9 @@ function love.load()
 
   if map.layers.events then map.layers.events.visible = false end
   
-  -- musicBackground = love.audio.newSource('assets/sfx_ambience_night.mp3', 'stream')
-  -- musicBackground:setLooping(true)
-  -- musicBackground:play()
+  musicBackground = love.audio.newSource('assets/bg.mp3', 'stream')
+  musicBackground:setLooping(true)
+  musicBackground:play()
 
   canvas = love.graphics.newCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
@@ -27,7 +27,7 @@ function love.load()
   camera:setBounds(0, 0, map.width * map.tilewidth, map.height * map.tileheight)
   camera:setFollowLerp(1)
 
-  player = Player:new({ gridX = 9, gridY = 3 })
+  player = Player:new({ gridX = 1, gridY = 6 })
 
   Graph.static.graphs.camera = Graph:new('Cam: %s')
   Graph.static.graphs.fps = Graph:new('FPS: %s')
