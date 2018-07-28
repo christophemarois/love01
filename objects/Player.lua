@@ -104,7 +104,7 @@ function Player:jump ()
   if not self:isOnGround() then return end
 
   local sound = _.sample(sounds.jump)
-  sound:setVolume(0.5)
+  sound:setVolume(0.7)
   sound:play()
   
   self.wasRunningBeforeJump = self.state == 'running'

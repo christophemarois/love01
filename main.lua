@@ -16,8 +16,9 @@ function love.load()
 
   if map.layers.events then map.layers.events.visible = false end
   
-  musicBackground = love.audio.newSource('assets/bg.mp3', 'stream')
+  musicBackground = love.audio.newSource('assets/bg.ogg', 'stream')
   musicBackground:setLooping(true)
+  musicBackground:setVolume(0.5)
   musicBackground:play()
 
   canvas = love.graphics.newCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
