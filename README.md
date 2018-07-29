@@ -1,5 +1,8 @@
 This is the source code for my [blog post](https://github.com/christophemarois/gamedev-blog/issues/1).
 
+* [Download](https://github.com/christophemarois/love01/raw/master/dist/love01.love) cross-platform `.love` file (requires [LÖVE](https://love2d.org/) to run)
+* [Download](https://github.com/christophemarois/love01/raw/master/dist/love01-macos.zip) built macOS binary (self-contained)
+
 # Learning game development
 
 ![screenshot](https://media.giphy.com/media/dgsxhGP8GQR7B2AiPr/giphy.gif)
