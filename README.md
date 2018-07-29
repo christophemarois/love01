@@ -34,7 +34,6 @@ Overall, I'm pretty satisfied with the results, which couldn't possibly have bee
 
 * Tileset and original animated character sprite: [Buch](https://opengameart.org/users/buch)
 * Font: HeartbitXX by	[Void](https://arcade.itch.io/)
-* Enemies sprites: [Luis Zuno](https://www.patreon.com/ansimuz)
 * Music: [bart](https://opengameart.org/content/jump-and-run-tropical-mix)
 
 ---
