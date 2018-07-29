@@ -25,7 +25,7 @@ anim8 = require('lib/anim8')
 Timer = require('lib/hump/timer')
 
 -- https://github.com/SSYGEN/STALKER-X#quick-start
-Camera = require('lib/camera')
+Camera = require('lib/stalker-x')
 
 -- Pretty print anything
 local inspect = require('lib/inspect')
